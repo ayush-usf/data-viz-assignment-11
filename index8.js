@@ -1,4 +1,4 @@
-const chartAreaHeight = 420
+const chartAreaHeight = 720
 const chartAreaWidth = 1200
 
 const margin = {top: 50, right: 50, bottom: 70, left: 150}
@@ -18,7 +18,8 @@ const svg = d3.select("#chart-area").append("svg")
 const g = svg.append("g")
     .attr("transform", `translate(${margin.left}, ${margin.top} )`);
 
-const monthsArr = ["January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+// const monthsArr = ["January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const monthsArr = ["2010","2011","2012","2013","2014","2015","2016","2017","2018"];
 
 const citiesDict = {
     "ATL": "Atlanta",
@@ -43,15 +44,15 @@ const monthDict = {
     "12": "December",
 }
 
-const airportCodes = ["New York","San Francisco","Austin"];
+const airportCodes = ['Category A','Category B','Category C','Category D','Category E'];
 
 // Extracting data from CSV - async IIFE
 ( async ()=>{
     try{
         let map = {}
-        const data = await d3.tsv("data.tsv")
+        const data = await d3.tsv("test5.tsv")
         data.forEach(i=>{
-            let key = i.date.substring(4,6)
+            let key = i.year
             if(!map[key]){
                 map[key] = []
             }
@@ -60,19 +61,25 @@ const airportCodes = ["New York","San Francisco","Austin"];
         let plotData2 = []
         Object.keys(map).forEach((month) =>{
             let dict = {}
-            dict["New York"] = 0
-            dict["San Francisco"] = 0
-            dict["Austin"] = 0
+            dict["Category A"] = 0
+            dict["Category B"] = 0
+            dict["Category C"] = 0
+            dict["Category D"] = 0
+            dict["Category E"] = 0
             let len = map[month].length;
             map[month].forEach(data=>{
-                dict["New York"] += +data["New York"]
-                dict["San Francisco"] += +data["San Francisco"]
-                dict["Austin"] += +data["Austin"]
+                dict["Category A"] += +data["Category A"]
+                dict["Category B"] += +data["Category B"]
+                dict["Category C"] += +data["Category C"]
+                dict["Category D"] += +data["Category D"]
+                dict["Category E"] += +data["Category E"]
             })
             console.log("dict",dict);
-            dict["New York"] = dict["New York"]/len
-            dict["San Francisco"] = dict["San Francisco"]/len
-            dict["Austin"] = dict["Austin"]/len
+            dict["Category A"] = dict["Category A"]/len
+            dict["Category B"] = dict["Category B"]/len
+            dict["Category C"] = dict["Category C"]/len
+            dict["Category D"] = dict["Category D"]/len
+            dict["Category E"] = dict["Category E"]/len
             const minVal = Math.min.apply(null,Object.values(dict))
             const maxVal = Math.max.apply(null,Object.values(dict))
             if(min){
@@ -91,7 +98,7 @@ const airportCodes = ["New York","San Francisco","Austin"];
             }
 
             Object.keys(dict).forEach(city=>{
-                plotData2.push({group:monthDict[month], value:Math.round(dict[city]), variable:city})
+                plotData2.push({group:month, value:Math.round(dict[city]), variable:city})
             })
         })
         drawBarChart(plotData2);
@@ -245,7 +252,7 @@ function drawBarChart(data) {
                 .style("left", event.pageX - 100 + "px")
                 .style("top", event.pageY - 90 + "px")
                 .style("display", "inline-block")
-                .html("City: " + (d.variable) + "<br>Month: "+  d.group + "<br>Temperature: "+ (d.value));
+                .html((d.variable) + "<br>Year: "+  d.group + "<br>Average: "+ (d.value));
         })
         .on("mouseout", function(d){ tooltip.style("display", "none");});
 
